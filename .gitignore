@@ -1,14 +1,14 @@
 # Executables and libraries
 *.exe
-*.dll
-*.a
+#*.dll
+#*.a
 
 # Build artifacts
 *.o
 *.obj
 
 # VS Code settings (optional)
-.vscode/
+#.vscode/
 
 # OS specific files
 .DS_Store
