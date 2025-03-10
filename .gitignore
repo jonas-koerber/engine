@@ -1,0 +1,15 @@
+# Executables and libraries
+*.exe
+*.dll
+*.a
+
+# Build artifacts
+*.o
+*.obj
+
+# VS Code settings (optional)
+.vscode/
+
+# OS specific files
+.DS_Store
+Thumbs.db
