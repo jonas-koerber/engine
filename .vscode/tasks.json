@@ -4,13 +4,13 @@
     {
       "type": "cppbuild",
       "label": "C/C++: g++.exe build active file",
-      "command": "C:/msys64/mingw64/bin/g++.exe",
+      "command": "C:/msys64/mingw64/bin/gcc.exe",
       "args": [
         "-g",
-        "-std=c++17",
+        "-std=c11",
         "-I${workspaceFolder}/include/",
         "-L${workspaceFolder}/lib/",
-        "${workspaceFolder}/src/main.cpp",
+        "${workspaceFolder}/src/main.c",
         "${workspaceFolder}/src/glad.c",
         "-lglfw3dll",
         "-o",
@@ -24,7 +24,7 @@
         "kind": "build",
         "isDefault": true
       },
-      "detail": "compiler: C:/msys64/mingw64/bin/g++.exe"
+      "detail": "compiler: C:/msys64/mingw64/bin/gcc.exe"
     }
   ]
 }

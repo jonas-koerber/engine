@@ -1,8 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <iostream>
-
-using namespace std; 
+#include <stdio.h>
+#include <stdlib.h>
 
 // Vertex Shader source code
 const char *vertexShaderSource = "#version 330 core\n"
@@ -28,14 +27,14 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 void processInput(GLFWwindow *window)
 {
     if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-        glfwSetWindowShouldClose(window, true);
+        glfwSetWindowShouldClose(window, 1);
 }
 
-int main()
+int main(void)
 {
     if (!glfwInit())
     {
-        cout << "Failed to initialize GLFW" << endl;
+        printf("Failed to initialize GLFW\n");
         return -1;
     }
 
@@ -48,14 +47,14 @@ int main()
     window = glfwCreateWindow(800, 600, "engine", NULL, NULL);
     if (window == NULL)
     {
-        cout << "Failed to open GLFW window" << endl;
+        printf("Failed to open GLFW window\n");
         return -1;
     }
     glfwMakeContextCurrent(window);
 
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
-        cout << "Failed to initialize GLAD" << endl;
+        printf("Failed to initialize GLAD\n");
         return -1;
     }
 
@@ -75,7 +74,7 @@ int main()
     if (!success)
     {
         glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-        cout << "ERROR::SHADER::VERTEX::COMPILATION_FAILED\n" << infoLog << endl;
+        printf("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n%s\n", infoLog);
     }
     
     // Fragment shader
@@ -88,7 +87,7 @@ int main()
     if (!success)
     {
         glGetShaderInfoLog(fragmentShader, 512, NULL, infoLog);
-        cout << "ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n" << infoLog << endl;
+        printf("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n%s\n", infoLog);
     }
 
     // Link shaders
@@ -101,7 +100,7 @@ int main()
     glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
     if (!success) {
         glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-        cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n" << infoLog << endl;
+        printf("ERROR::SHADER::PROGRAM::LINKING_FAILED\n%s\n", infoLog);
     }
     
     // Delete the shaders as they're linked into our program now and no longer necessary
