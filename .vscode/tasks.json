@@ -3,7 +3,7 @@
   "tasks": [
     {
       "type": "cppbuild",
-      "label": "C/C++: g++.exe build active file",
+      "label": "C: gcc.exe build active file",
       "command": "C:/msys64/mingw64/bin/gcc.exe",
       "args": [
         "-g",
@@ -12,6 +12,9 @@
         "-L${workspaceFolder}/lib/",
         "${workspaceFolder}/src/main.c",
         "${workspaceFolder}/src/glad.c",
+        "${workspaceFolder}/src/display.c",
+        "${workspaceFolder}/src/shader.c",
+        "${workspaceFolder}/src/input.c",
         "-lglfw3dll",
         "-o",
         "${workspaceFolder}/engine.exe"

@@ -1,6 +1,10 @@
 {
   "files.associations": {
     "ostream": "cpp",
-    "iostream": "cpp"
+    "iostream": "cpp",
+    "glfw3.h": "c",
+    "input.h": "c",
+    "glad.h": "c",
+    "stdio.h": "c"
   }
 }
