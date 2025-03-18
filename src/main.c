@@ -29,6 +29,54 @@ int main(void)
 
     struct Shader shader;
     shader_init(&shader, vertexShaderSource, fragmentShaderSource);
+    
+    // Example 5: Star (using GL_TRIANGLES)
+    float vertices[] = {
+        // Center point
+         0.0f,  0.0f, 0.0f,
+        // Points of the star (5 triangles)
+         0.0f,  0.5f, 0.0f,
+         0.1f,  0.2f, 0.0f,
+         
+         0.0f,  0.0f, 0.0f,
+         0.1f,  0.2f, 0.0f,
+         0.5f,  0.2f, 0.0f,
+         
+         0.0f,  0.0f, 0.0f,
+         0.5f,  0.2f, 0.0f,
+         0.2f, -0.1f, 0.0f,
+         
+         0.0f,  0.0f, 0.0f,
+         0.2f, -0.1f, 0.0f,
+         0.3f, -0.5f, 0.0f,
+         
+         0.0f,  0.0f, 0.0f,
+         0.3f, -0.5f, 0.0f, 
+         0.0f, -0.2f, 0.0f,
+         
+         0.0f,  0.0f, 0.0f,
+         0.0f, -0.2f, 0.0f,
+        -0.3f, -0.5f, 0.0f,
+         
+         0.0f,  0.0f, 0.0f,
+        -0.3f, -0.5f, 0.0f,
+        -0.2f, -0.1f, 0.0f,
+         
+         0.0f,  0.0f, 0.0f,
+        -0.2f, -0.1f, 0.0f,
+        -0.5f,  0.2f, 0.0f,
+         
+         0.0f,  0.0f, 0.0f,
+        -0.5f,  0.2f, 0.0f,
+        -0.1f,  0.2f, 0.0f,
+         
+         0.0f,  0.0f, 0.0f,
+        -0.1f,  0.2f, 0.0f,
+         0.0f,  0.5f, 0.0f
+    };
+    // END OF VERTEX DATAS
+
+    shader_bind_vertecies(&shader, vertices, sizeof(vertices), GL_TRIANGLES);
 
     // render loop
     while(!display_should_close(&display))
@@ -40,9 +88,7 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw our triangle
-        glUseProgram(shader.program);
-        glBindVertexArray(shader.VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        shader_draw(&shader); 
  
         display_update(&display);
     }

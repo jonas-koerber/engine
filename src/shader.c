@@ -1,15 +1,15 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "engine/shader.h"
 
-void shader_init(struct Shader *shader, const char *vertex_shader_source, const char *fragment_shader_source)
+void shader_init(struct Shader *shader, const char *vertex_shader, const char *fragment_shader)
 {
-    // Build and compile our shader program
     // Vertex shader
     shader->vertex_shader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(shader->vertex_shader, 1, &vertex_shader_source, NULL);
+    glShaderSource(shader->vertex_shader, 1, &vertex_shader, NULL);
     glCompileShader(shader->vertex_shader);
 
     // Check for shader compile errors
@@ -24,7 +24,7 @@ void shader_init(struct Shader *shader, const char *vertex_shader_source, const 
     
     // Fragment shader
     shader->fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(shader->fragment_shader, 1, &fragment_shader_source, NULL);
+    glShaderSource(shader->fragment_shader, 1, &fragment_shader, NULL);
     glCompileShader(shader->fragment_shader);
     
     // Check for shader compile errors
@@ -53,21 +53,19 @@ void shader_init(struct Shader *shader, const char *vertex_shader_source, const 
     glDeleteShader(shader->vertex_shader);
     glDeleteShader(shader->fragment_shader);
 
-    // Set up vertex data (and buffer(s)) and configure vertex attributes
-    float vertices[] = {
-        -0.5f, -0.5f, 0.0f, // left  
-         0.5f, -0.5f, 0.0f, // right 
-         0.0f,  0.5f, 0.0f  // top   
-    };
-
     glGenVertexArrays(1, &shader->VAO);
     glGenBuffers(1, &shader->VBO);
+}
 
-    // Bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
+void shader_bind_vertecies(struct Shader *shader, float vertices[], size_t size, GLenum draw_mode)
+{
+    shader->draw_mode = draw_mode;
+    shader->vertex_size = size;
+    shader->vertex_count = size / (3 * sizeof(float));
+
     glBindVertexArray(shader->VAO);
-
     glBindBuffer(GL_ARRAY_BUFFER, shader->VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -76,6 +74,14 @@ void shader_init(struct Shader *shader, const char *vertex_shader_source, const 
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
     // You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens.
+    glBindVertexArray(0);
+}
+
+void shader_draw(struct Shader *shader)
+{    
+    glUseProgram(shader->program);
+    glBindVertexArray(shader->VAO);
+    glDrawArrays(shader->draw_mode, 0, shader->vertex_count);
     glBindVertexArray(0);
 }
 
