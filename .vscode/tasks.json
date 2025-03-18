@@ -15,6 +15,7 @@
         "${workspaceFolder}/src/display.c",
         "${workspaceFolder}/src/shader.c",
         "${workspaceFolder}/src/input.c",
+        "${workspaceFolder}/src/file.c",
         "-lglfw3dll",
         "-o",
         "${workspaceFolder}/engine.exe"

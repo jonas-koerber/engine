@@ -5,30 +5,35 @@
 #include "engine/display.h"
 #include "engine/shader.h"
 #include "engine/input.h"
-
-// Vertex Shader source code
-const char *vertexShaderSource = "#version 330 core\n"
-    "layout (location = 0) in vec3 aPos;\n"
-    "void main()\n"
-    "{\n"
-    "   gl_Position = vec4(aPos.x, aPos.y, aPos.z, 1.0);\n"
-    "}\0";
-
-// Fragment Shader source code
-const char *fragmentShaderSource = "#version 330 core\n"
-    "out vec4 FragColor;\n"
-    "void main()\n"
-    "{\n"
-    "   FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);\n"
-    "}\0";
+#include "engine/file.h"
 
 int main(void)
 {
+    struct File vertexShaderFile = file_read("shader/basic.vert");
+    if(vertexShaderFile.data == NULL)
+    {
+        fprintf(stderr, "Failed to read file: %s\n", vertexShaderFile.path);
+        return 1;
+    }
+    const char* vertexShaderSource = vertexShaderFile.data;
+
+    struct File fragmentShaderFile = file_read("shader/basic.frag");
+    if(fragmentShaderFile.data == NULL)
+    {
+        fprintf(stderr, "Failed to read file: %s\n", fragmentShaderFile.path);
+        return 1;
+    }
+    const char* fragmentShaderSource = fragmentShaderFile.data;
+
+
     struct Display display;
     display_init(&display, 800, 600, "engine");
 
     struct Shader shader;
     shader_init(&shader, vertexShaderSource, fragmentShaderSource);
+    
+    file_destroy(&vertexShaderFile);
+    file_destroy(&fragmentShaderFile);
     
     // Example 5: Star (using GL_TRIANGLES)
     float vertices[] = {
