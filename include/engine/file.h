@@ -1,3 +1,5 @@
+#pragma once
+
 struct File {
     char *data;
     size_t size;

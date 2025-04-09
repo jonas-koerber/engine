@@ -1,4 +1,5 @@
-// mesh.h
+#pragma once
+
 struct Mesh {
     unsigned int VAO, VBO, EBO;
     unsigned int vertexCount;

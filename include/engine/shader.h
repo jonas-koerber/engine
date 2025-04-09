@@ -1,3 +1,5 @@
+#pragma once
+
 struct Shader
 {
     unsigned int vertex_shader;
