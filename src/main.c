@@ -6,6 +6,7 @@
 #include "engine/shader.h"
 #include "engine/input.h"
 #include "engine/file.h"
+#include "engine/mesh.h"
 
 int main(void)
 {
@@ -34,54 +35,21 @@ int main(void)
     
     file_destroy(&vertexShaderFile);
     file_destroy(&fragmentShaderFile);
-    
-    // Example 5: Star (using GL_TRIANGLES)
-    float vertices[] = {
-        // Center point
-         0.0f,  0.0f, 0.0f,
-        // Points of the star (5 triangles)
-         0.0f,  0.5f, 0.0f,
-         0.1f,  0.2f, 0.0f,
-         
-         0.0f,  0.0f, 0.0f,
-         0.1f,  0.2f, 0.0f,
-         0.5f,  0.2f, 0.0f,
-         
-         0.0f,  0.0f, 0.0f,
-         0.5f,  0.2f, 0.0f,
-         0.2f, -0.1f, 0.0f,
-         
-         0.0f,  0.0f, 0.0f,
-         0.2f, -0.1f, 0.0f,
-         0.3f, -0.5f, 0.0f,
-         
-         0.0f,  0.0f, 0.0f,
-         0.3f, -0.5f, 0.0f, 
-         0.0f, -0.2f, 0.0f,
-         
-         0.0f,  0.0f, 0.0f,
-         0.0f, -0.2f, 0.0f,
-        -0.3f, -0.5f, 0.0f,
-         
-         0.0f,  0.0f, 0.0f,
-        -0.3f, -0.5f, 0.0f,
-        -0.2f, -0.1f, 0.0f,
-         
-         0.0f,  0.0f, 0.0f,
-        -0.2f, -0.1f, 0.0f,
-        -0.5f,  0.2f, 0.0f,
-         
-         0.0f,  0.0f, 0.0f,
-        -0.5f,  0.2f, 0.0f,
-        -0.1f,  0.2f, 0.0f,
-         
-         0.0f,  0.0f, 0.0f,
-        -0.1f,  0.2f, 0.0f,
-         0.0f,  0.5f, 0.0f
-    };
-    // END OF VERTEX DATAS
 
-    shader_bind_vertecies(&shader, vertices, sizeof(vertices), GL_TRIANGLES);
+    struct Mesh triangle;
+    mesh_init(&triangle);
+
+    float vertices[] = {
+        // positions
+        -0.5f, -0.5f, 0.0f,  // bottom left
+         0.5f, -0.5f, 0.0f,  // bottom right
+         0.0f,  0.5f, 0.0f   // top
+    };
+    mesh_set_vertices(&triangle, vertices, sizeof(vertices));
+    int indices[] = {
+        0, 1, 2  // Triangle
+    };
+    mesh_set_indices(&triangle, indices, sizeof(indices) / sizeof(indices[0]));
 
     // render loop
     while(!display_should_close(&display))
@@ -92,8 +60,15 @@ int main(void)
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // draw our triangle
-        shader_draw(&shader); 
+        // draw triangle
+        shader_use(&shader);
+        glBindVertexArray(triangle.VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, triangle.VBO);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, triangle.EBO);
+        glDrawElements(GL_TRIANGLES, triangle.indexCount, GL_UNSIGNED_INT, 0);
+        
+        glBindVertexArray(0);
  
         display_update(&display);
     }

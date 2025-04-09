@@ -5,6 +5,8 @@
     "glfw3.h": "c",
     "input.h": "c",
     "glad.h": "c",
-    "stdio.h": "c"
+    "stdio.h": "c",
+    "mesh.h": "c",
+    "shader.h": "c"
   }
 }
