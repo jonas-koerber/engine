@@ -1,6 +1,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "engine/display.h"
 #include "engine/shader.h"
@@ -47,12 +48,33 @@ int main(void)
          0.0f,  0.5f, 0.0f   // top
     };
     mesh_set_vertices(&triangle, vertices, sizeof(vertices));
+
     int indices[] = {
         0, 1, 2  // Triangle
     };
     mesh_set_indices(&triangle, indices, sizeof(indices) / sizeof(indices[0]));
 
+    size_t entity_capacity = 10; // Start with capacity for 10 entities
+    size_t entity_count = 0;     // Initially, we have 0 entities
+    struct Entity** entities_to_draw = malloc(entity_capacity * sizeof(struct Entity*)); // Array of pointers
+    if (entities_to_draw == NULL) {
+        fprintf(stderr, "Failed to allocate memory for entities.\n");
+        return 1;
+    }
+
     struct Entity* entity = entity_create(&triangle);
+
+    if (entity != NULL) { // Check if entity creation succeeded
+        if (entity_count < entity_capacity) {
+             entities_to_draw[entity_count] = entity;
+             entity_count++;
+        } else {
+            // Optional: Handle resizing the array here later if needed using realloc
+            fprintf(stderr, "Entity list full! (Need to implement resizing)\n");
+        }
+    } else {
+         fprintf(stderr, "Failed to create entity1!\n");
+    }
 
     // render loop
     while(!display_should_close(&display))
@@ -64,21 +86,31 @@ int main(void)
         glClear(GL_COLOR_BUFFER_BIT);
 
         // draw mesh
-        shader_use(&shader);
-        glBindVertexArray(entity->mesh->VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, entity->mesh->VBO);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, entity->mesh->EBO);
-        glDrawElements(GL_TRIANGLES, entity->mesh->indexCount, GL_UNSIGNED_INT, 0);
         
-        glBindVertexArray(0);
+        for (size_t i = 0; i < entity_count; ++i) {
+            struct Entity* current_entity = entities_to_draw[i];
+            
+            if (current_entity && current_entity->mesh) {
+                shader_use(&shader);
+                glBindVertexArray(current_entity->mesh->VAO);
+                glDrawElements(GL_TRIANGLES, current_entity->mesh->indexCount, GL_UNSIGNED_INT, 0);
+                glBindVertexArray(0);
+            }
+        }
  
         display_update(&display);
     }
 
-    // optional: de-allocate all resources once they've outlived their purpose:
-    shader_destroy(&shader);
+    for (size_t i = 0; i < entity_count; ++i) {
+        entity_destroy(entities_to_draw[i]);
+    }
 
+    free(entities_to_draw);
+
+    // optional: de-allocate all resources once they've outlived their purpose:
+    mesh_destroy(&triangle);
+    shader_destroy(&shader);
     display_destroy(&display);
+
     return 0;
 }

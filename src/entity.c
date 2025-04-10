@@ -9,3 +9,7 @@ struct Entity* entity_create(struct Mesh* mesh) {
     entity->mesh = mesh;
     return entity;
 }
+
+void entity_destroy(struct Entity* entity) {
+    free(entity);
+}
