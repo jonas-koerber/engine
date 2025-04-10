@@ -1,7 +1,7 @@
 #pragma once
 
 struct File {
-    char *data;
+    char* data;
     size_t size;
     const char* path;
 };

@@ -5,7 +5,7 @@
 
 #include "engine/shader.h"
 
-void shader_init(struct Shader *shader, const char *vertex_shader, const char *fragment_shader)
+void shader_init(struct Shader* shader, const char* vertex_shader, const char* fragment_shader)
 {
     // Vertex shader
     shader->vertex_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -54,12 +54,12 @@ void shader_init(struct Shader *shader, const char *vertex_shader, const char *f
     glDeleteShader(shader->fragment_shader);
 }
 
-void shader_use(struct Shader *shader)
+void shader_use(struct Shader* shader)
 {
     glUseProgram(shader->program);
 }
 
-void shader_destroy(struct Shader *shader)
+void shader_destroy(struct Shader* shader)
 {
     glDeleteProgram(shader->program);
 }
