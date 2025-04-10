@@ -7,6 +7,7 @@
 #include "engine/input.h"
 #include "engine/file.h"
 #include "engine/mesh.h"
+#include "engine/entity.h"
 
 int main(void)
 {
@@ -51,6 +52,8 @@ int main(void)
     };
     mesh_set_indices(&triangle, indices, sizeof(indices) / sizeof(indices[0]));
 
+    struct Entity* entity = entity_create(&triangle);
+
     // render loop
     while(!display_should_close(&display))
     {
@@ -60,13 +63,13 @@ int main(void)
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // draw triangle
+        // draw mesh
         shader_use(&shader);
-        glBindVertexArray(triangle.VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, triangle.VBO);
+        glBindVertexArray(entity->mesh->VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, entity->mesh->VBO);
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, triangle.EBO);
-        glDrawElements(GL_TRIANGLES, triangle.indexCount, GL_UNSIGNED_INT, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, entity->mesh->EBO);
+        glDrawElements(GL_TRIANGLES, entity->mesh->indexCount, GL_UNSIGNED_INT, 0);
         
         glBindVertexArray(0);
  

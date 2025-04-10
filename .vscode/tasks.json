@@ -17,6 +17,7 @@
         "${workspaceFolder}/src/input.c",
         "${workspaceFolder}/src/file.c",
         "${workspaceFolder}/src/mesh.c",
+        "${workspaceFolder}/src/entity.c",
         "-lglfw3dll",
         "-o",
         "${workspaceFolder}/engine.exe"
