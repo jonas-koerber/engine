@@ -35,6 +35,8 @@ void display_init(struct Display* display, int width, int height, const char* ti
         printf("Failed to initialize GLAD\n");
         return;
     }
+
+    glEnable(GL_DEPTH_TEST);
     
     // Set viewport
     glViewport(0, 0, width, height);

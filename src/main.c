@@ -39,6 +39,7 @@ int main(void)
     unsigned int model_uniform_location = glGetUniformLocation(shader.program, "model");
     unsigned int view_uniform_location = glGetUniformLocation(shader.program, "view");
     unsigned int projection_uniform_location = glGetUniformLocation(shader.program, "projection");
+    unsigned int color_uniform_location = glGetUniformLocation(shader.program, "color");
     
     file_destroy(&vertex_shader_file);
     file_destroy(&fragment_shader_file);
@@ -47,15 +48,58 @@ int main(void)
     mesh_init(&triangle);
 
     float vertices[] = {
-        // positions
-        -0.5f, -0.5f, 0.0f,  // bottom left
-         0.5f, -0.5f, 0.0f,  // bottom right
-         0.0f,  0.5f, 0.0f   // top
+        // Position           Normal
+        // Front face (+Z)
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f, // 0: Bottom left front
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f, // 1: Bottom right front
+         0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f, // 2: Top right front
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 1.0f, // 3: Top left front
+
+        // Back face (-Z)
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f,-1.0f, // 4: Bottom left back
+         0.5f, -0.5f, -0.5f,  0.0f, 0.0f,-1.0f, // 5: Bottom right back
+         0.5f,  0.5f, -0.5f,  0.0f, 0.0f,-1.0f, // 6: Top right back
+        -0.5f,  0.5f, -0.5f,  0.0f, 0.0f,-1.0f, // 7: Top left back
+
+        // Left face (-X)
+        -0.5f, -0.5f, -0.5f, -1.0f, 0.0f, 0.0f, // 8: Bottom left back (dup vert 4)
+        -0.5f, -0.5f,  0.5f, -1.0f, 0.0f, 0.0f, // 9: Bottom left front (dup vert 0)
+        -0.5f,  0.5f,  0.5f, -1.0f, 0.0f, 0.0f, // 10: Top left front (dup vert 3)
+        -0.5f,  0.5f, -0.5f, -1.0f, 0.0f, 0.0f, // 11: Top left back (dup vert 7)
+
+        // Right face (+X)
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, // 12: Bottom right front (dup vert 1)
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f, // 13: Bottom right back (dup vert 5)
+         0.5f,  0.5f, -0.5f,  1.0f, 0.0f, 0.0f, // 14: Top right back (dup vert 6)
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f, // 15: Top right front (dup vert 2)
+
+        // Top face (+Y)
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f, // 16: Top left front (dup vert 3)
+         0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f, // 17: Top right front (dup vert 2)
+         0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f, // 18: Top right back (dup vert 6)
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f, // 19: Top left back (dup vert 7)
+
+        // Bottom face (-Y)
+        -0.5f, -0.5f, -0.5f,  0.0f,-1.0f, 0.0f, // 20: Bottom left back (dup vert 4)
+         0.5f, -0.5f, -0.5f,  0.0f,-1.0f, 0.0f, // 21: Bottom right back (dup vert 5)
+         0.5f, -0.5f,  0.5f,  0.0f,-1.0f, 0.0f, // 22: Bottom right front (dup vert 1)
+        -0.5f, -0.5f,  0.5f,  0.0f,-1.0f, 0.0f  // 23: Bottom left front (dup vert 0)
     };
     mesh_set_vertices(&triangle, vertices, sizeof(vertices));
 
-    int indices[] = {
-        0, 1, 2  // Triangle
+    unsigned int indices[] = {
+        // Front face
+        0, 1, 2,  2, 3, 0,
+        // Back face
+        5, 4, 7,  7, 6, 5,
+        // Left face
+        8, 9, 10, 10, 11, 8,
+        // Right face
+        12, 13, 14, 14, 15, 12,
+        // Top face
+        16, 17, 18, 18, 19, 16,
+        // Bottom face
+        20, 21, 22, 22, 23, 20
     };
     mesh_set_indices(&triangle, indices, sizeof(indices) / sizeof(indices[0]));
 
@@ -69,7 +113,9 @@ int main(void)
 
     struct Transform transform;
     transform_init(&transform);
-    transform.x = 2.0f;
+    transform.scale_z = 3.0f;
+    transform.scale_y = 2.0f;
+    transform.rotation_x = 0.5f;
     
     struct Entity* entity = entity_create(&triangle, &transform);
 
@@ -104,18 +150,22 @@ int main(void)
         
         // draw background
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         shader_use(&shader);
 
         shader_set_uniform_mat4(view_uniform_location, &view_matrix);
         shader_set_uniform_mat4(projection_uniform_location, &projection_matrix);
 
+        double time = glfwGetTime();
+
         // draw entities
         for (size_t i = 0; i < entity_count; ++i) {
             struct Entity* current_entity = entities_to_draw[i];
             
             if (current_entity && current_entity->mesh) {
+                current_entity->transform->rotation_y = (float)time * 0.5f;
+
                 Mat4 model_matrix;
                 transform_to_matrix(&model_matrix, current_entity->transform);
                 shader_set_uniform_mat4(model_uniform_location, &model_matrix);

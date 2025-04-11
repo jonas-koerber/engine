@@ -19,16 +19,22 @@ void mesh_set_vertices(struct Mesh* mesh, float* vertices, size_t size) {
     glBindBuffer(GL_ARRAY_BUFFER, mesh->vbo);
     glBufferData(GL_ARRAY_BUFFER, size, vertices, GL_STATIC_DRAW);
 
+    size_t stride = 6 * sizeof(float); // 3 position + 3 normal
+
     // Assuming each vertex has 3 floats (x, y, z)
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
     glEnableVertexAttribArray(0);
+
+    // Normal attribute (location = 1)
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float))); //
+    glEnableVertexAttribArray(1); // 3 normal
 
     // Unbind the vao and vbo
     // Unbind vao first, ensuring vbo binding is captured correctly by attribute pointers.
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 
-    mesh->vertex_count = size / (3 * sizeof(float));
+    mesh->vertex_count = size / stride;
 }
 
 void mesh_set_indices(struct Mesh* mesh, unsigned int* indices, size_t count) {

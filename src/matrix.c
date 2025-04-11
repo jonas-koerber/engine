@@ -15,8 +15,18 @@ void transform_to_matrix(Mat4* out, const struct Transform* transform) {
 
     // Add full rotation later
     // For now, just use rotation_z
+    Mat4 rotation_x_matrix;
+    Mat4 rotation_y_matrix;
+    Mat4 rotation_z_matrix;
+    matrix_create_rotation_x(&rotation_x_matrix, transform->rotation_x);
+    matrix_create_rotation_y(&rotation_y_matrix, transform->rotation_y);
+    matrix_create_rotation_z(&rotation_z_matrix, transform->rotation_z);
+
+    Mat4 rotation_matrix_xy;
     Mat4 rotation_matrix;
-    matrix_create_rotation_z(&rotation_matrix, transform->rotation_z);
+    matrix_multiply(&rotation_matrix_xy, &rotation_x_matrix, &rotation_y_matrix);
+    matrix_multiply(&rotation_matrix, &rotation_matrix_xy, &rotation_z_matrix);
+
 
     Mat4 translation_matrix;
     matrix_set_identity(&translation_matrix);
@@ -65,6 +75,26 @@ void matrix_create_perspective(Mat4* out, float fov_radians, float aspect_ratio,
 void matrix_create_camera(Mat4* out) {
     matrix_set_identity(out);
     out->m[2][3] = -5.0f;
+}
+
+void matrix_create_rotation_x(Mat4* out, float angle_radians) {
+    matrix_set_identity(out);
+    float cos_angle = cosf(angle_radians);
+    float sin_angle = sinf(angle_radians);
+    out->m[1][1] = cos_angle;
+    out->m[1][2] = -sin_angle;
+    out->m[2][1] = sin_angle;
+    out->m[2][2] = cos_angle;
+}
+
+void matrix_create_rotation_y(Mat4* out, float angle_radians) {
+    matrix_set_identity(out);
+    float cos_angle = cosf(angle_radians);
+    float sin_angle = sinf(angle_radians);
+    out->m[0][0] = cos_angle;
+    out->m[0][2] = sin_angle;
+    out->m[2][0] = -sin_angle;
+    out->m[2][2] = cos_angle;
 }
 
 void matrix_create_rotation_z(Mat4* out, float angle_radians) {
