@@ -12,6 +12,7 @@
     "transform.h": "c",
     "entity.h": "c",
     "matrix.h": "c",
-    "string.h": "c"
+    "string.h": "c",
+    "stdlib.h": "c"
   }
 }

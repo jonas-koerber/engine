@@ -1,5 +1,7 @@
 #pragma once
 
+#include <GLFW/glfw3.h>
+
 struct Display {
     GLFWwindow* window;
     int width;

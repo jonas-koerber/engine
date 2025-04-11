@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stddef.h>
+
 struct File {
     char* data;
     size_t size;

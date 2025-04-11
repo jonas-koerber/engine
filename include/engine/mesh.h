@@ -1,5 +1,7 @@
 #pragma once
 
+#include <stddef.h>
+
 struct Mesh {
     unsigned int vao, vbo, ebo;
     unsigned int vertex_count;
