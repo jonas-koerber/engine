@@ -5,9 +5,9 @@ struct Transform;
 typedef struct { float m[4][4]; } Mat4;
 typedef struct { float x, y, z; } Vec3;
 
-void transform_to_matrix(Mat4* outMatrix, const struct Transform* transform);
+void transform_to_matrix(Mat4* out, const struct Transform* transform);
 
-void matrix_set_identity(Mat4* matrix);
+void matrix_set_identity(Mat4* out);
 
 void matrix_create_perspective(Mat4* out, float fov_radians, float aspect_ratio, float near_plane, float far_plane);
 

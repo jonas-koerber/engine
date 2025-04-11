@@ -1,7 +1,8 @@
+#include "engine/entity.h"
+
 #include <stdlib.h>
 #include <GLFW/glfw3.h>
 
-#include "engine/entity.h"
 #include "engine/mesh.h"
 #include "engine/transform.h"
 

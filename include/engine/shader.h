@@ -2,8 +2,7 @@
 
 #include "engine/matrix.h"
 
-struct Shader
-{
+struct Shader {
     unsigned int vertex_shader;
     unsigned int fragment_shader;
     unsigned int program;

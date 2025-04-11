@@ -1,6 +1,5 @@
-// struct not necessary for this snippet
-// will be used later for state management, like forwards, jumping, etc.
+#pragma once
 
 void processInput(GLFWwindow* window);
 
-#pragma once
+// will be used later for state management, like forwards, jumping, etc.

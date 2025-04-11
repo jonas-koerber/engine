@@ -1,9 +1,9 @@
 #pragma once
 
 struct Mesh {
-    unsigned int VAO, VBO, EBO;
-    unsigned int vertexCount;
-    unsigned int indexCount;
+    unsigned int vao, vbo, ebo;
+    unsigned int vertex_count;
+    unsigned int index_count;
 };
 
 void mesh_init(struct Mesh* mesh);

@@ -1,8 +1,8 @@
+#include "engine/display.h"
+
+#include <stdio.h>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#include <stdio.h>
-
-#include "engine/display.h"
 
 void display_init(struct Display* display, int width, int height, const char* title) {
     display->width = width;

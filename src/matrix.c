@@ -1,39 +1,40 @@
-#include <string.h>
+#include "engine/matrix.h"
+
 #include <stdlib.h>
+#include <string.h>
 #include <math.h>
 
-#include "engine/matrix.h"
 #include "engine/transform.h"
 
-void transform_to_matrix(Mat4* outMatrix, const struct Transform* transform) {
-    Mat4 scaleMatrix;
-    matrix_set_identity(&scaleMatrix);
-    scaleMatrix.m[0][0] = transform->scaleX;
-    scaleMatrix.m[1][1] = transform->scaleY;
-    scaleMatrix.m[2][2] = transform->scaleZ;
+void transform_to_matrix(Mat4* out, const struct Transform* transform) {
+    Mat4 scale_matrix;
+    matrix_set_identity(&scale_matrix);
+    scale_matrix.m[0][0] = transform->scale_x;
+    scale_matrix.m[1][1] = transform->scale_y;
+    scale_matrix.m[2][2] = transform->scale_z;
 
     // Add full rotation later
-    // For now, just use rotationZ
-    Mat4 rotationMatrix;
-    matrix_create_rotation_z(&rotationMatrix, transform->rotationZ);
+    // For now, just use rotation_z
+    Mat4 rotation_matrix;
+    matrix_create_rotation_z(&rotation_matrix, transform->rotation_z);
 
-    Mat4 translationMatrix;
-    matrix_set_identity(&translationMatrix);
-    translationMatrix.m[0][3] = transform->x;
-    translationMatrix.m[1][3] = transform->y;
-    translationMatrix.m[2][3] = transform->z;
+    Mat4 translation_matrix;
+    matrix_set_identity(&translation_matrix);
+    translation_matrix.m[0][3] = transform->x;
+    translation_matrix.m[1][3] = transform->y;
+    translation_matrix.m[2][3] = transform->z;
 
-    Mat4 translationRotationMatrix;
-    matrix_multiply(&translationRotationMatrix, &translationMatrix, &rotationMatrix);
-    matrix_multiply(outMatrix, &translationRotationMatrix, &scaleMatrix);
+    Mat4 translation_rotation_matrix;
+    matrix_multiply(&translation_rotation_matrix, &translation_matrix, &rotation_matrix);
+    matrix_multiply(out, &translation_rotation_matrix, &scale_matrix);
 }
 
-void matrix_set_identity(Mat4* matrix) {
-    memset(matrix->m, 0, sizeof(matrix->m));
-    matrix->m[0][0] = 1.0f;
-    matrix->m[1][1] = 1.0f;
-    matrix->m[2][2] = 1.0f;
-    matrix->m[3][3] = 1.0f;
+void matrix_set_identity(Mat4* out) {
+    memset(out->m, 0, sizeof(out->m));
+    out->m[0][0] = 1.0f;
+    out->m[1][1] = 1.0f;
+    out->m[2][2] = 1.0f;
+    out->m[3][3] = 1.0f;
 }
 
 void matrix_create_perspective(Mat4* out, float fov_radians, float aspect_ratio, float near_plane, float far_plane) {
