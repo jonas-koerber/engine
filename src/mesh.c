@@ -13,7 +13,6 @@ void mesh_init(struct Mesh* mesh) {
 
     mesh->vertexCount = 0;
     mesh->indexCount = 0;
-    mesh->drawMode = GL_TRIANGLES;
 }
 
 void mesh_set_vertices(struct Mesh* mesh, float* vertices, size_t size) {

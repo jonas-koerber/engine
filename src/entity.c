@@ -3,10 +3,12 @@
 
 #include "engine/entity.h"
 #include "engine/mesh.h"
+#include "engine/transform.h"
 
-struct Entity* entity_create(struct Mesh* mesh) {
+struct Entity* entity_create(struct Mesh* mesh, struct Transform* transform) {
     struct Entity* entity = malloc(sizeof(struct Entity));
     entity->mesh = mesh;
+    entity->transform = transform;
     return entity;
 }
 

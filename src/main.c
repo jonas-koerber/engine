@@ -9,6 +9,8 @@
 #include "engine/file.h"
 #include "engine/mesh.h"
 #include "engine/entity.h"
+#include "engine/transform.h"
+#include "engine/matrix.h"
 
 int main(void)
 {
@@ -34,6 +36,9 @@ int main(void)
 
     struct Shader shader;
     shader_init(&shader, vertexShaderSource, fragmentShaderSource);
+    unsigned int modelUniformLocation = glGetUniformLocation(shader.program, "model");
+    unsigned int viewUniformLocation = glGetUniformLocation(shader.program, "view");
+    unsigned int projectionUniformLocation = glGetUniformLocation(shader.program, "projection");
     
     file_destroy(&vertexShaderFile);
     file_destroy(&fragmentShaderFile);
@@ -62,7 +67,11 @@ int main(void)
         return 1;
     }
 
-    struct Entity* entity = entity_create(&triangle);
+    struct Transform transform;
+    transform_init(&transform);
+    transform.x = 2.0f;
+    
+    struct Entity* entity = entity_create(&triangle, &transform);
 
     if (entity != NULL) { // Check if entity creation succeeded
         if (entity_count < entity_capacity) {
@@ -76,6 +85,18 @@ int main(void)
          fprintf(stderr, "Failed to create entity1!\n");
     }
 
+    Mat4 viewMatrix;
+    matrix_create_camera(&viewMatrix);
+
+    Mat4 projectionMatrix;
+    float aspectRatio = (float)display.width / (float)display.height;
+    float fovRadians = 3.14159f / 4.0f; // Example: 45 degrees FOV
+    float nearClip = 0.1f;
+    float farClip = 100.0f;
+
+    matrix_create_perspective(&projectionMatrix, fovRadians, aspectRatio, nearClip, farClip);
+
+
     // render loop
     while(!display_should_close(&display))
     {
@@ -85,13 +106,19 @@ int main(void)
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
 
-        // draw mesh
-        
+        shader_use(&shader);
+
+        shader_set_uniform_mat4(viewUniformLocation, &viewMatrix);
+        shader_set_uniform_mat4(projectionUniformLocation, &projectionMatrix);
+
+        // draw entities
         for (size_t i = 0; i < entity_count; ++i) {
             struct Entity* current_entity = entities_to_draw[i];
             
             if (current_entity && current_entity->mesh) {
-                shader_use(&shader);
+                Mat4 modelMatrix;
+                transform_to_matrix(&modelMatrix, current_entity->transform);
+                shader_set_uniform_mat4(modelUniformLocation, &modelMatrix);
                 glBindVertexArray(current_entity->mesh->VAO);
                 glDrawElements(GL_TRIANGLES, current_entity->mesh->indexCount, GL_UNSIGNED_INT, 0);
                 glBindVertexArray(0);

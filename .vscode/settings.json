@@ -8,6 +8,10 @@
     "stdio.h": "c",
     "mesh.h": "c",
     "shader.h": "c",
-    "display.h": "c"
+    "display.h": "c",
+    "transform.h": "c",
+    "entity.h": "c",
+    "matrix.h": "c",
+    "string.h": "c"
   }
 }

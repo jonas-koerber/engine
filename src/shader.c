@@ -4,6 +4,7 @@
 #include <stdlib.h>
 
 #include "engine/shader.h"
+#include "engine/matrix.h"
 
 void shader_init(struct Shader* shader, const char* vertex_shader, const char* fragment_shader)
 {
@@ -57,6 +58,11 @@ void shader_init(struct Shader* shader, const char* vertex_shader, const char* f
 void shader_use(struct Shader* shader)
 {
     glUseProgram(shader->program);
+}
+
+void shader_set_uniform_mat4(unsigned int location, const Mat4* matrix)
+{
+    glUniformMatrix4fv(location, 1, GL_TRUE, &matrix->m[0][0]);
 }
 
 void shader_destroy(struct Shader* shader)

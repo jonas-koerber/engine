@@ -4,8 +4,6 @@ struct Mesh {
     unsigned int VAO, VBO, EBO;
     unsigned int vertexCount;
     unsigned int indexCount;
-
-    GLenum drawMode;
 };
 
 void mesh_init(struct Mesh* mesh);
