@@ -47,22 +47,28 @@ int main(void)
 
     struct Mesh cube;
     mesh_init(&cube);
-    struct obj obj;
-    struct File obj_file = file_read("object/alfa147.obj");
-    if(obj_file.data == NULL)
-    {
-        fprintf(stderr, "Failed to read file: %s\n", obj_file.path);
-        return 1;
-    }
-    file_to_obj(&obj, obj_file.data, obj_file.size);
-    file_destroy(&obj_file);
+    struct File meta_file = file_read("object/mesh_data.file");
+    if(meta_file.data == NULL) {
+        struct obj obj;
+        struct File obj_file = file_read("object/alfa147.obj");
+        if(obj_file.data == NULL)
+        {
+            fprintf(stderr, "Failed to read file: %s\n", obj_file.path);
+            return 1;
+        }
+        file_to_obj(&obj, obj_file.data, obj_file.size);
+        file_destroy(&obj_file);
 
-    obj_to_mesh(&cube, &obj);
-    
-    free(obj.vertices);
-    free(obj.texture_coords);
-    free(obj.normals);
-    free(obj.faces);
+        obj_to_mesh(&cube, &obj);
+        
+        free(obj.vertices);
+        free(obj.texture_coords);
+        free(obj.normals);
+        free(obj.faces);
+    } else {
+        file_to_mesh(&cube, meta_file.data, meta_file.size);
+        file_destroy(&meta_file);
+    }
 
     size_t entity_capacity = 10; // Start with capacity for 10 entities
     size_t entity_count = 0;     // Initially, we have 0 entities

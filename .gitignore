@@ -6,6 +6,7 @@
 # Build artifacts
 *.o
 *.obj
+*.file
 
 # VS Code settings (optional)
 #.vscode/

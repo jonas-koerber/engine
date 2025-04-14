@@ -8,6 +8,7 @@
 #include <GLFW/glfw3.h>
 
 #include "engine/obj.h"
+#include "engine/file.h"
 
 // Helper function to configure buffers and attributes
 // Assumes interleaved data: Pos(3 floats), Normal(3 floats), TexCoord(2 floats)
@@ -183,8 +184,44 @@ void obj_to_mesh(struct Mesh* mesh, const struct obj* obj) {
         }
     }
 
+    mesh_data_to_file("object/mesh_data.file", final_vertices, final_vertex_count, final_indices, final_index_count);
+
     // Configure the mesh buffers with the generated data
     mesh_configure_buffers(mesh, final_vertices, final_vertex_count * 8 * sizeof(float), final_indices, final_index_count);
+}
+
+void file_to_mesh(struct Mesh* mesh, const char* data, size_t size) {
+    if (size < 4 || strncmp(data, "MESH", 4) != 0) {
+        fprintf(stderr, "Error: Invalid mesh file format.\n");
+        return;
+    }
+
+    uint32_t vertex_count = *(uint32_t*)(data + 4);
+    uint32_t index_count = *(uint32_t*)(data + 8);
+
+    // Calculate the size of the vertex data
+    size_t vertex_data_size = vertex_count * 8 * sizeof(float); // 8 floats per vertex
+
+    // Allocate memory for vertices and indices
+    float* vertices = malloc(vertex_data_size);
+    unsigned int* indices = malloc(index_count * sizeof(unsigned int));
+    if (!vertices || !indices) {
+        fprintf(stderr, "Error: Failed to allocate memory for mesh data.\n");
+        free(vertices);
+        free(indices);
+        return;
+    }
+
+    // Copy the vertex and index data from the file
+    memcpy(vertices, data + 12, vertex_data_size);
+    memcpy(indices, data + 12 + vertex_data_size, index_count * sizeof(unsigned int));
+
+    // Configure the mesh buffers with the loaded data
+    mesh_configure_buffers(mesh, vertices, vertex_data_size, indices, index_count);
+
+    // Clean up
+    free(vertices);
+    free(indices);
 }
 
 void mesh_destroy(struct Mesh* mesh) {

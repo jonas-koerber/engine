@@ -14,4 +14,6 @@ void mesh_init(struct Mesh* mesh);
 
 void obj_to_mesh(struct Mesh* mesh, const struct obj* obj);
 
+void file_to_mesh(struct Mesh* mesh, const char* data, size_t size);
+
 void mesh_destroy(struct Mesh* mesh);
