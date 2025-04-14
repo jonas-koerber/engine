@@ -13,4 +13,4 @@ struct obj {
     size_t faces_size;
 };
 
-void file_to_obj(struct obj* obj, char* data);
+void file_to_obj(struct obj* obj, char* data, size_t file_size);

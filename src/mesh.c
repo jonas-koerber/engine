@@ -89,7 +89,9 @@ void obj_to_mesh(struct Mesh* mesh, const struct obj* obj) {
     final_indices = malloc(final_indices_capacity * sizeof(unsigned int));
     if (!final_indices) {
         fprintf(stderr, "Error: Failed to allocate memory for final indices.\n");
-        goto cleanup; // Use goto for cleanup on error
+        free(final_vertices);
+        free(final_indices);
+        free(unique_vertices);
     }
 
     // Process each face (triangle)
@@ -122,7 +124,9 @@ void obj_to_mesh(struct Mesh* mesh, const struct obj* obj) {
                     float* new_vertices = realloc(final_vertices, final_vertices_capacity * 8 * sizeof(float)); // 8 floats per vertex
                     if (!new_vertices) {
                         fprintf(stderr, "Error: Failed to reallocate final vertex buffer.\n");
-                        goto cleanup;
+                        free(final_vertices);
+                        free(final_indices);
+                        free(unique_vertices);
                     }
                     final_vertices = new_vertices;
                 }
@@ -133,7 +137,9 @@ void obj_to_mesh(struct Mesh* mesh, const struct obj* obj) {
                     VertexIndexCombination* new_unique = realloc(unique_vertices, unique_vertices_capacity * sizeof(VertexIndexCombination));
                      if (!new_unique) {
                         fprintf(stderr, "Error: Failed to reallocate unique vertex tracking array.\n");
-                        goto cleanup;
+                        free(final_vertices);
+                        free(final_indices);
+                        free(unique_vertices);
                     }
                     unique_vertices = new_unique;
                  }
@@ -179,12 +185,6 @@ void obj_to_mesh(struct Mesh* mesh, const struct obj* obj) {
 
     // Configure the mesh buffers with the generated data
     mesh_configure_buffers(mesh, final_vertices, final_vertex_count * 8 * sizeof(float), final_indices, final_index_count);
-
-// Cleanup allocated temporary memory
-cleanup:
-    free(final_vertices);
-    free(final_indices);
-    free(unique_vertices);
 }
 
 void mesh_destroy(struct Mesh* mesh) {

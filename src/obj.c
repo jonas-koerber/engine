@@ -4,8 +4,32 @@
 #include <stdlib.h>
 #include <string.h>
 
-void file_to_obj(struct obj* obj, char* data)
+void file_to_obj(struct obj* obj, char* data, size_t file_size)
 {
+    // temporary variables for counting lines
+    size_t v_count = 0;
+    size_t vt_count = 0;
+    size_t vn_count = 0;
+    size_t f_count = 0;
+
+    const char* current_pos = data;
+    const char* end_pos = data + file_size;
+
+    while(current_pos < end_pos) {
+        if (strncmp(current_pos, "v ", 2) == 0) {
+            v_count++;
+        } else if (strncmp(current_pos, "vt ", 3) == 0) {
+            vt_count++;
+        } else if (strncmp(current_pos, "vn ", 3) == 0) {
+            vn_count++;
+        } else if (strncmp(current_pos, "f ", 2) == 0) {
+            f_count++;
+        }
+        current_pos = strchr(current_pos, '\n');
+        if (current_pos == NULL) break;
+        current_pos++;
+    }
+
     // Initialize the obj structure
     obj->vertices = NULL;
     obj->vertices_size = 0;
@@ -16,18 +40,40 @@ void file_to_obj(struct obj* obj, char* data)
     obj->faces = NULL;
     obj->faces_size = 0;
 
+    // Allocate memory for vertices
+    obj->vertices = realloc(obj->vertices, v_count * 3 * sizeof(float));
+    if (obj->vertices == NULL) {
+        fprintf(stderr, "Memory allocation failed for vertices.\n");
+        return;
+    }
+
+    // Allocate memory for texture coordinates
+    obj->texture_coords = realloc(obj->texture_coords, vt_count * 2 * sizeof(float));
+    if (obj->texture_coords == NULL) {
+        fprintf(stderr, "Memory allocation failed for texture coordinates.\n");
+        return;
+    }
+
+    // Allocate memory for normals
+    obj->normals = realloc(obj->normals, vn_count * 3 * sizeof(float));
+    if (obj->normals == NULL) {
+        fprintf(stderr, "Memory allocation failed for normals.\n");
+        return;
+    }
+
+    // Allocate memory for faces
+    obj->faces = realloc(obj->faces, f_count * 9 * sizeof(unsigned int));
+    if (obj->faces == NULL) {
+        fprintf(stderr, "Memory allocation failed for faces.\n");
+        return;
+    }
+
     // Parse the OBJ file data
     char* line = strtok(data, "\n");
     while (line != NULL) {
         if (strncmp(line, "v ", 2) == 0) {
             // Vertex position
             obj->vertices_size++;
-            // Allocate memory for vertices
-            obj->vertices = realloc(obj->vertices, obj->vertices_size * 3 * sizeof(float));
-            if (obj->vertices == NULL) {
-                fprintf(stderr, "Memory allocation failed for vertices.\n");
-                return;
-            }
             // Parse vertex position
             float x, y, z;
             sscanf(line + 2, "%f %f %f", &x, &y, &z);
@@ -37,12 +83,6 @@ void file_to_obj(struct obj* obj, char* data)
         } else if(strncmp(line, "vt ", 3) == 0) {
             // Texture coordinate
             obj->texture_coords_size++;
-            // Allocate memory for texture coordinates
-            obj->texture_coords = realloc(obj->texture_coords, obj->texture_coords_size * 2 * sizeof(float));
-            if (obj->texture_coords == NULL) {
-                fprintf(stderr, "Memory allocation failed for texture coordinates.\n");
-                return;
-            }
             // Parse texture coordinate
             float u, v;
             sscanf(line + 3, "%f %f", &u, &v);
@@ -51,12 +91,6 @@ void file_to_obj(struct obj* obj, char* data)
         } else if(strncmp(line, "vn ", 3) == 0) {
             // Vertex normal
             obj->normals_size++;
-            // Allocate memory for normals
-            obj->normals = realloc(obj->normals, obj->normals_size * 3 * sizeof(float));
-            if (obj->normals == NULL) {
-                fprintf(stderr, "Memory allocation failed for normals.\n");
-                return;
-            }
             // Parse vertex normal
             float nx, ny, nz;
             sscanf(line + 3, "%f %f %f", &nx, &ny, &nz);
@@ -66,12 +100,6 @@ void file_to_obj(struct obj* obj, char* data)
         } else if(strncmp(line, "f ", 2) == 0) {
             // Face
             obj->faces_size++;
-            // Allocate memory for faces
-            obj->faces = realloc(obj->faces, obj->faces_size * 9 * sizeof(unsigned int));
-            if (obj->faces == NULL) {
-                fprintf(stderr, "Memory allocation failed for faces.\n");
-                return;
-            }
             // Parse face
             unsigned int v1, v2, v3;
             unsigned int vt1, vt2, vt3;

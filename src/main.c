@@ -54,7 +54,7 @@ int main(void)
         fprintf(stderr, "Failed to read file: %s\n", obj_file.path);
         return 1;
     }
-    file_to_obj(&obj, obj_file.data);
+    file_to_obj(&obj, obj_file.data, obj_file.size);
     file_destroy(&obj_file);
 
     obj_to_mesh(&cube, &obj);
