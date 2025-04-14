@@ -48,7 +48,7 @@ int main(void)
     struct Mesh cube;
     mesh_init(&cube);
     struct obj obj;
-    struct File obj_file = file_read("object/cube.obj");
+    struct File obj_file = file_read("object/alfa147.obj");
     if(obj_file.data == NULL)
     {
         fprintf(stderr, "Failed to read file: %s\n", obj_file.path);
@@ -58,6 +58,11 @@ int main(void)
     file_destroy(&obj_file);
 
     obj_to_mesh(&cube, &obj);
+    
+    free(obj.vertices);
+    free(obj.texture_coords);
+    free(obj.normals);
+    free(obj.faces);
 
     size_t entity_capacity = 10; // Start with capacity for 10 entities
     size_t entity_count = 0;     // Initially, we have 0 entities
@@ -69,20 +74,24 @@ int main(void)
 
     struct Transform transform;
     transform_init(&transform);
-    transform.rotation_x = 0.5f;
+    transform.z = -60.0f;
+    transform.y = -10.0f;
+    transform.rotation_x = -100.0f;
+    transform.scale_x = 0.3f;
+    transform.scale_y = 0.3f;
+    transform.scale_z = 0.3f;
     
     struct Entity* entity = entity_create(&cube, &transform);
 
-    if (entity != NULL) { // Check if entity creation succeeded
+    if (entity != NULL) {
         if (entity_count < entity_capacity) {
              entities_to_draw[entity_count] = entity;
              entity_count++;
         } else {
-            // Optional: Handle resizing the array here later if needed using realloc
-            fprintf(stderr, "Entity list full! (Need to implement resizing)\n");
+            fprintf(stderr, "Entity list full!\n");
         }
     } else {
-         fprintf(stderr, "Failed to create entity1!\n");
+         fprintf(stderr, "Failed to create entity!\n");
     }
 
     Mat4 view_matrix;
@@ -118,7 +127,7 @@ int main(void)
             struct Entity* current_entity = entities_to_draw[i];
             
             if (current_entity && current_entity->mesh) {
-                current_entity->transform->rotation_y = (float)time * 0.5f;
+                current_entity->transform->rotation_z = (float)time * 0.5f;
 
                 Mat4 model_matrix;
                 transform_to_matrix(&model_matrix, current_entity->transform);

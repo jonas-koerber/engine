@@ -20,6 +20,7 @@
         "${workspaceFolder}/src/entity.c",
         "${workspaceFolder}/src/transform.c",
         "${workspaceFolder}/src/matrix.c",
+        "${workspaceFolder}/src/obj.c",
         "-lglfw3dll",
         "-o",
         "${workspaceFolder}/engine.exe"

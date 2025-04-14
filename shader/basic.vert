@@ -1,6 +1,7 @@
 #version 330 core
 layout (location = 0) in vec3 aPos;
 layout (location = 1) in vec3 aNormal; // Accept normal attribute
+layout (location = 2) in vec2 aTexCoord; // Accept texture coordinate attribute - not used yet
 
 uniform mat4 model;
 uniform mat4 view;
