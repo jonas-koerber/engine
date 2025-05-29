@@ -1,5 +1,6 @@
 # Executables and libraries
 *.exe
+game_engine
 #*.dll
 #*.a
 
