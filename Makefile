@@ -8,9 +8,23 @@ OBJS = $(SRCS:.c=.o)
 EXEC = game_engine
 
 # Compiler flags
-CFLAGS = -Wall -Wextra -g -Iinclude 
-# Linker flags (ensure you link against GLFW, OpenGL, and math library)
-LDFLAGS = -lglfw -lGL -lm -ldl -pthread 
+CFLAGS = -Wall -Wextra -g -Iinclude
+
+# --- OS Detection and Conditional Linker Flags ---
+UNAME_S := $(shell uname -s)
+
+ifeq ($(UNAME_S),Linux)
+    # Linker flags for Linux
+    LDFLAGS = -lglfw -lGL -lm -ldl -pthread
+else ifeq ($(UNAME_S),Darwin)
+    # Linker flags for macOS
+    LDFLAGS = -L/opt/homebrew/lib -L/usr/local/lib -lglfw -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo -lm -ldl -pthread
+else
+    # Fallback for other OSes (optional: issue a warning or use a default)
+    $(warning "Unsupported OS: $(UNAME_S). Attempting to use Linux LDFLAGS as default.")
+    LDFLAGS = -lglfw -lGL -lm -ldl -pthread
+endif
+# --- End of OS Detection and Conditional Linker Flags ---
 
 # Default target
 all: $(EXEC)
