@@ -2,8 +2,6 @@
 
 #include <stddef.h>
 
-struct obj;
-
 struct Mesh {
     unsigned int vao, vbo, ebo;
     size_t  index_count;
@@ -11,8 +9,6 @@ struct Mesh {
 };
 
 void mesh_init(struct Mesh* mesh);
-
-void obj_to_mesh(struct Mesh* mesh, const struct obj* obj);
 
 void file_to_mesh(struct Mesh* mesh, const char* data, size_t size);
 

@@ -11,7 +11,6 @@
 #include "engine/entity.h"
 #include "engine/transform.h"
 #include "engine/matrix.h"
-#include "engine/obj.h"
 
 int main(void)
 {

@@ -1,7 +1,7 @@
 CC = gcc
 # Source files
 SRCS = src/main.c src/glad.c src/display.c src/shader.c src/input.c \
-       src/file.c src/mesh.c src/entity.c src/transform.c src/matrix.c src/obj.c
+       src/file.c src/mesh.c src/entity.c src/transform.c src/matrix.c
 # Object files
 OBJS = $(SRCS:.c=.o)
 # Executable name
